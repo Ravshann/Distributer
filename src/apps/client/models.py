@@ -14,6 +14,9 @@ class Time(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        abstract = True
+
 
 class Company(SingletonModel, Time):
     token = models.CharField(max_length=64, blank=True)
@@ -53,3 +56,20 @@ class Product(Time):
     class Meta:
         verbose_name = _('Product')
         verbose_name_plural = _('Products')
+
+
+class Order(Time):
+    order_id = models.CharField(verbose_name=_('Order ID'), max_length=255)
+    shop = models.CharField(verbose_name=_('Shop'), max_length=255)
+    due_date = models.DateTimeField(_('Due date'))
+    quantity = models.PositiveIntegerField(_('Quantity'))
+    product = models.CharField(verbose_name=_('Product'), max_length=255)
+    address = PlainLocationField(verbose_name=_('Address'), based_fields=['city'], zoom=7,
+                                 default='41.313918406594375, 69.24613952636719', max_length=255)
+
+    def __str__(self):
+        return self.productName
+
+    class Meta:
+        verbose_name = _('Order')
+        verbose_name_plural = _('Orders')
